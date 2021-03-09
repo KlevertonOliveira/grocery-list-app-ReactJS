@@ -44,16 +44,6 @@ function App() {
       }
     }
 
-  const kgInputValidation = (e) =>{
-    let value = e.target.value;
-    if(value == 0){
-      showAlert(true,'danger','Only values above 0 are allowed!')
-    }
-    else{
-      setKg(value);
-    }
-  }
-
   const handleSubmit = (e) =>{
     e.preventDefault();
 
