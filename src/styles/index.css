@@ -52,7 +52,7 @@ h1{
 /* App Layout */
 
 .container{
-  background: var(--white);
+  background: #e6e6ff;
   border-radius: 5px;
   margin: 3.5rem auto 3.5rem;
   width: 90%;
@@ -214,10 +214,11 @@ input[type="number"]{
 .list-content tbody tr{
   text-align: center;
   border-bottom: 1px solid #dddddd;
+  font-size: 1.1rem;
 }
 
 .list-content tbody tr:nth-of-type(even){
-  background-color: #e6e6e6b6;
+  background-color: #cccccc;
 }
 
 .list-content tbody tr:last-of-type{
