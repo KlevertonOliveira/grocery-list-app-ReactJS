@@ -24,7 +24,36 @@ function App() {
   const [editID, setEditID] = useState(null);
 
   const [alert, setAlert] = useState({show:false, type:'', msg:''})
-  
+
+  const setInitialConfigs = () =>{
+    toggleDisabledStatus(1);
+    setName('');
+    setAmount(1);
+    setKg(0);
+    setEditID(null);
+    setIsEditing(false);
+  }
+
+  const inputValidation = (e) =>{
+    let value = e.target.value;
+    if(value == 0){
+      showAlert(true,'danger','Only values above 0 are allowed!')
+    }
+    else{
+      lock === 1? setAmount(value) : setKg(value);
+      }
+    }
+
+  const kgInputValidation = (e) =>{
+    let value = e.target.value;
+    if(value == 0){
+      showAlert(true,'danger','Only values above 0 are allowed!')
+    }
+    else{
+      setKg(value);
+    }
+  }
+
   const handleSubmit = (e) =>{
     e.preventDefault();
 
@@ -43,21 +72,14 @@ function App() {
         })
       );
       
-      setName('');
-      toggleDisabledStatus(1);
-      setAmount(1);
-      setKg(0);
-      setEditID(null);
-      setIsEditing(false);
+      setInitialConfigs();
       showAlert(true, 'success', 'Value changed!');
     }
     
     else{
       const newItem = {id: new Date().getTime().toString(), name, amount, kg};
       setList([...list, newItem]);
-      setName('');
-      setAmount(0);
-      setKg(0);
+      setInitialConfigs();
       showAlert(true, 'success', 'Item successfully added!');
     }
   }
@@ -83,7 +105,6 @@ function App() {
 
     setEditID(id);
     setIsEditing(true);
-    
   }
 
   const showAlert = (show=false, type='', msg='') =>{
@@ -93,10 +114,7 @@ function App() {
   const clearAll = () =>{
     setList([]);
     showAlert(true, 'danger', 'Empty list!');
-    if(isEditing) setIsEditing(false);
-    if(name) setName('');
-    if(amount) setAmount(0);
-    if(kg) setKg(0);
+    setInitialConfigs();
   }
 
   const toggleDisabledStatus = (number) =>{
@@ -122,27 +140,27 @@ function App() {
 
   return (
     <main className="container">
-      
-      <div className="form-control">
 
-        {alert.show && <Alert {...alert} list={list} removeAlert={showAlert}></Alert>}
-        <h1>Grocery List</h1>
+        <div className="align-center">
+          {alert.show && <Alert {...alert} list={list} removeAlert={showAlert}></Alert>}
+          <h1>Grocery List</h1>
+        </div>
         
         <form action="">
           
-          <div className="form__name-container">
+          <div className="form__name-container align-center">
             <label htmlFor="name"> Name: </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={name}
-                onChange={(e)=>setName(e.target.value)}
-                placeholder="e.g. banana"
-              />
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={name}
+              onChange={(e)=>setName(e.target.value)}
+              placeholder="e.g. banana"
+            />
           </div>
 
-          <div className="form__amount-container">
+          <div className="form__quantity-container">
             <div>         
               <input 
                 type="checkbox"
@@ -151,15 +169,15 @@ function App() {
               />
               <label htmlFor="amount"> Amount: </label>
               <input
-                className={amountDisabledStatus && `disabled`}
+                className={`${amountDisabledStatus && 'disabled'}`}
                 type="number"
                 id="amount"
                 name="amount"
-                min="1"
+                min='1'
                 disabled={amountDisabledStatus}
                 value={amount}
-                onChange={(e)=>setAmount(e.target.value)}
-                placeholder="0"
+                onChange={inputValidation}
+                placeholder="1"
               />
             </div>
             <div>
@@ -170,32 +188,33 @@ function App() {
                 />
                 <label htmlFor="kg"> Kg: </label>
                 <input
-                  className={kgDisabledStatus && `disabled`}
+                  className={`${kgDisabledStatus && 'disabled'}`}
                   type="number"
                   id="kg"
                   name="kg"
                   min="1"
                   disabled={kgDisabledStatus}
                   value={kg}
-                  onChange={(e)=>setKg(e.target.value)}
-                  placeholder="0"
+                  onChange={inputValidation}
+                  placeholder="1"
                 />
             </div>
           </div>
         </form>
+        <div className="submit align-center">
           <button
             className="submit-btn" 
             type="submit"
             onClick={handleSubmit}
             >
-            {isEditing?"Edit":"Submit"}
+            {isEditing?"Edit":"Add to list"}
           </button>
-      </div>
+        </div>
 
         {list.length > 0 && 
           <div className="list-container">
             <List list={list} deleteItem={deleteItem} editItem={editItem}></List>
-            <div className="clear-all">
+            <div className="clear-all align-center">
               <button type="button" className="clear-btn" onClick={clearAll}>Clear all</button>
             </div>
           </div>

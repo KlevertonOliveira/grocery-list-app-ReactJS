@@ -6,7 +6,7 @@ const List = ({list, deleteItem, editItem}) => {
 
   return (
     <section className="items-section">
-      <table>
+      <table className="list-content">
         <thead>
           <tr>
             <th>Name</th>
