@@ -25,7 +25,7 @@ function App() {
 
   const [alert, setAlert] = useState({show:false, type:'', msg:''})
 
-  const setInitialConfigs = () =>{
+  const setAllToInitialConfigs = () =>{
     toggleDisabledStatus(1);
     setName('');
     setAmount(1);
@@ -62,14 +62,14 @@ function App() {
         })
       );
       
-      setInitialConfigs();
+      setAllToInitialConfigs();
       showAlert(true, 'success', 'Value changed!');
     }
     
     else{
       const newItem = {id: new Date().getTime().toString(), name, amount, kg};
       setList([...list, newItem]);
-      setInitialConfigs();
+      setAllToInitialConfigs();
       showAlert(true, 'success', 'Item successfully added!');
     }
   }
@@ -104,7 +104,7 @@ function App() {
   const clearAll = () =>{
     setList([]);
     showAlert(true, 'danger', 'Empty list!');
-    setInitialConfigs();
+    setAllToInitialConfigs();
   }
 
   const toggleDisabledStatus = (number) =>{

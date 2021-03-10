@@ -215,6 +215,7 @@ input[type="number"]{
   text-align: center;
   border-bottom: 1px solid #dddddd;
   font-size: 1.1rem;
+  background-color: #ebebf7;
 }
 
 .list-content tbody tr:nth-of-type(even){
