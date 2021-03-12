@@ -1,8 +1,9 @@
 import React from 'react'
 import {GoTrashcan} from 'react-icons/go';
 import {RiEdit2Fill} from 'react-icons/ri';
+import {ACTIONS} from '../reducer';
 
-const List = ({list, deleteItem, editItem}) => {
+const List = ({list, editItem, dispatch}) => {
 
   return (
     <section className="items-section">
@@ -39,7 +40,7 @@ const List = ({list, deleteItem, editItem}) => {
                         type="button" 
                         className="remove"
                         title="Remove item"
-                        onClick={()=>deleteItem(id)}
+                        onClick={()=>dispatch({type:ACTIONS.REMOVE_ITEM, payload:{id}})}
                         >
                         <GoTrashcan />
                       </button>

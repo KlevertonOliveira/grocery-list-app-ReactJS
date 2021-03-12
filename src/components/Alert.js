@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
+import {ACTIONS} from '../reducer'
 
-const Alert = ({type, msg, list, removeAlert}) => {
+const Alert = ({list, dispatch, type, msg}) => {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      removeAlert();
+      dispatch({type:ACTIONS.CLOSE_ALERT})
     }, 3000);
     
     return () => clearTimeout(timeout); 

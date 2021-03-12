@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useReducer, useState} from 'react';
 import Alert from './components/Alert';
 import List from './components/List';
+import { ACTIONS, reducer } from './reducer';
 
 const getLocalStorage = () =>{
   let list = localStorage.getItem('list');
@@ -8,79 +9,70 @@ const getLocalStorage = () =>{
   return [];
 }
 
+const initialState = {
+  list: getLocalStorage(),
+  amountDisabledStatus: false,
+  kgDisabledStatus: true,
+  lock: 1,
+  isEditing: false,
+  editID: null,
+  isAlertDisplayed: false,
+  alertType: '',
+  alertContent: ''
+};
+
 function App() {
 
-  const [list, setList] = useState(getLocalStorage);
+  const [state, dispatch] = useReducer(reducer, initialState);
   
   const [name, setName] = useState('');
   const [amount, setAmount] = useState(1);
   const [kg, setKg] = useState(0);
-  
-  const [amountDisabledStatus, setAmountDisabledStatus] = useState(false);
-  const [kgDisabledStatus, setKgDisabledStatus] = useState(true);
-  const [lock, setLock] = useState(1);
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [editID, setEditID] = useState(null);
-
-  const [alert, setAlert] = useState({show:false, type:'', msg:''})
 
   const setAllToInitialConfigs = () =>{
     toggleDisabledStatus(1);
     setName('');
     setAmount(1);
     setKg(0);
-    setEditID(null);
-    setIsEditing(false);
-  }
+  };
 
   const inputValidation = (e) =>{
     let value = e.target.value;
+    
     if(value == 0){
-      showAlert(true,'danger','Only values above 0 are allowed!')
+      dispatch(
+        {type: ACTIONS.INVALID_INPUT, 
+         payload: {msg:'Only values above 0 are allowed!'}});
     }
+
     else{
-      lock === 1? setAmount(value) : setKg(value);
-      }
+      state.lock === 1? setAmount(value) : setKg(value);
     }
+  };
 
   const handleSubmit = (e) =>{
     e.preventDefault();
 
-    if(!name || (!amount && !kg)){
-      showAlert(true, 'danger', 'Please, make sure all fields are correctly filled!');
+    if(!name){
+      dispatch(
+        {type: ACTIONS.INVALID_INPUT, 
+         payload: {msg:'Please, make sure all fields are correctly filled!'}});
     }
 
-    else if(name && (amount || kg) && isEditing){
-
-      setList(
-        list.map((item)=>{
-        if(item.id === editID){
-          return {...item, name, amount, kg}
-        }
-        return item;
-        })
-      );
-      
+    else if(name && state.isEditing){
+      dispatch({type:ACTIONS.EDIT_ITEM, payload:{id:state.editID, name, amount, kg}});
       setAllToInitialConfigs();
-      showAlert(true, 'success', 'Value changed!');
     }
     
     else{
       const newItem = {id: new Date().getTime().toString(), name, amount, kg};
-      setList([...list, newItem]);
+      dispatch({type:ACTIONS.ADD_ITEM, payload:{newItem}});
       setAllToInitialConfigs();
-      showAlert(true, 'success', 'Item successfully added!');
     }
-  }
-
-  const deleteItem = (id) =>{
-    setList(list.filter((item)=> item.id !== id))
-    showAlert(true, 'danger', 'Item removed!');
-  }
+  };
   
   const editItem = (id) =>{
-    const item = list.find((item)=>item.id === id);
+    const item = state.list.find((item)=>item.id === id);
     setName(item.name);
     
     if(item.amount > 0){
@@ -88,29 +80,21 @@ function App() {
       setAmount(item.amount);
     }
 
-    if(item.kg > 0){
+    else{
       toggleDisabledStatus(2);
       setKg(item.kg);
     }
 
-    setEditID(id);
-    setIsEditing(true);
-  }
-
-  const showAlert = (show=false, type='', msg='') =>{
-    setAlert({show, type, msg});
-  }
+    dispatch({type:ACTIONS.TOGGLE_EDIT_MODE, payload:{id}});
+  };
 
   const clearAll = () =>{
-    setList([]);
-    showAlert(true, 'danger', 'Empty list!');
+    dispatch({type:ACTIONS.CLEAR_ALL});
     setAllToInitialConfigs();
-  }
+  };
 
   const toggleDisabledStatus = (number) =>{
-    if(number !== lock){
-      setAmountDisabledStatus(!amountDisabledStatus);
-      setKgDisabledStatus(!kgDisabledStatus);
+    if(number !== state.lock){
       
       if(number === 1){
         setAmount(1);
@@ -119,20 +103,28 @@ function App() {
         setAmount(0);
         setKg(1);
       }
-      setLock(number);
+  
+      dispatch({type:ACTIONS.TOGGLE_DISABLED_STATUS, payload:{number}})
     }
-  }
+  };
   
   useEffect(() => {
-    localStorage.setItem('list', JSON.stringify(list));
-  }, [list])
+    localStorage.setItem('list', JSON.stringify(state.list));
+  }, [state.list])
 
 
   return (
     <main className="container">
 
         <div className="align-center">
-          {alert.show && <Alert {...alert} list={list} removeAlert={showAlert}></Alert>}
+          {state.isAlertDisplayed && 
+            <Alert 
+              dispatch={dispatch} 
+              list={state.list} 
+              type={state.alertType} 
+              msg={state.alertContent}>
+            </Alert>
+          }
           <h1>Grocery List</h1>
         </div>
         
@@ -154,17 +146,17 @@ function App() {
             <div>         
               <input 
                 type="checkbox"
-                checked={!amountDisabledStatus}
+                checked={!state.amountDisabledStatus}
                 onClick={()=>toggleDisabledStatus(1)}
               />
               <label htmlFor="amount"> Amount: </label>
               <input
-                className={`${amountDisabledStatus && 'disabled'}`}
+                className={`${state.amountDisabledStatus && 'disabled'}`}
                 type="number"
                 id="amount"
                 name="amount"
                 min='1'
-                disabled={amountDisabledStatus}
+                disabled={state.amountDisabledStatus}
                 value={amount}
                 onChange={inputValidation}
                 placeholder="1"
@@ -173,17 +165,17 @@ function App() {
             <div>
                 <input 
                   type="checkbox"
-                  checked={!kgDisabledStatus}
+                  checked={!state.kgDisabledStatus}
                   onClick={()=>toggleDisabledStatus(2)}
                 />
                 <label htmlFor="kg"> Kg: </label>
                 <input
-                  className={`${kgDisabledStatus && 'disabled'}`}
+                  className={`${state.kgDisabledStatus && 'disabled'}`}
                   type="number"
                   id="kg"
                   name="kg"
                   min="1"
-                  disabled={kgDisabledStatus}
+                  disabled={state.kgDisabledStatus}
                   value={kg}
                   onChange={inputValidation}
                   placeholder="1"
@@ -197,13 +189,17 @@ function App() {
             type="submit"
             onClick={handleSubmit}
             >
-            {isEditing?"Edit":"Add to list"}
+            {state.isEditing?"Edit item":"Add item"}
           </button>
         </div>
 
-        {list.length > 0 && 
+        {state.list.length > 0 && 
           <div className="list-container">
-            <List list={list} deleteItem={deleteItem} editItem={editItem}></List>
+            <List 
+              list={state.list} 
+              dispatch={dispatch} 
+              editItem={editItem}>         
+              </List>
             <div className="clear-all align-center">
               <button type="button" className="clear-btn" onClick={clearAll}>Clear all</button>
             </div>
