@@ -7,7 +7,7 @@ export const ACTIONS = {
   REMOVE_ITEM: 'REMOVE_ITEM',
   TOGGLE_DISABLED_STATUS: 'TOGGLE_DISABLED_STATUS',
   TOGGLE_EDIT_MODE: 'TOGGLE_EDIT_MODE',
-}
+};
 
 export function reducer(state, action){
   switch(action.type){
@@ -31,13 +31,13 @@ export function reducer(state, action){
         isAlertDisplayed: true,
         alertType: 'danger',
         alertContent: 'Empty list!'
-      }
+      };
     
     case ACTIONS.CLOSE_ALERT:
       return{
         ...state,
         isAlertDisplayed: false
-      }
+      };
     
     case ACTIONS.EDIT_ITEM:
       const editedList = state.list.map((item)=>{
@@ -45,6 +45,7 @@ export function reducer(state, action){
         if(item.id === id) return {...item, name, amount, kg}
         return item;
       });
+
       return {
         ...state,
         list: editedList,
@@ -53,7 +54,7 @@ export function reducer(state, action){
         isAlertDisplayed: true,
         alertType: 'success',
         alertContent: 'Value changed!'
-      }
+      };
     
 
     case ACTIONS.INVALID_INPUT:
@@ -66,14 +67,14 @@ export function reducer(state, action){
     
     
     case ACTIONS.REMOVE_ITEM:
-        const listAfterRemoval = state.list.filter((item)=> item.id !== action.payload.id);
-        return {
-          ...state,
-          list: listAfterRemoval,
-          isAlertDisplayed: true,
-          alertType: 'danger',
-          alertContent: 'Item removed!'
-        }  
+      const listAfterRemoval = state.list.filter((item)=> item.id !== action.payload.id);
+      return {
+        ...state,
+        list: listAfterRemoval,
+        isAlertDisplayed: true,
+        alertType: 'danger',
+        alertContent: 'Item removed!'
+      };
 
     case ACTIONS.TOGGLE_DISABLED_STATUS:
       return{
@@ -81,14 +82,14 @@ export function reducer(state, action){
         amountDisabledStatus: !state.amountDisabledStatus,
         kgDisabledStatus: !state.kgDisabledStatus,
         lock: action.payload.number
-      }
+      };
 
     case ACTIONS.TOGGLE_EDIT_MODE:
       return{
         ...state,
         isEditing: true,
         editID: action.payload.id
-      }
+      };
     
     default:
       return state;
