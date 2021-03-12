@@ -9,7 +9,7 @@ Grocery List is a Front End application created with the objective of practicing
 
 The project consists of adding, manipulating and removing items from a shopping list, going beyond the original project by implementing the idea of amount/kg and the logic involved for this operation, as well as modifying the way information is displayed by making use of a table of data to better organize the user interaction with the application.
 
-//
+///
 
 Grocery List/Lista de Compras é uma aplicação Front End criada com o objetivo de praticar o desenvolvimento de aplicações web utilizando a biblioteca ReactJS. A aplicação toma como base o projeto denominado Grocery Bud de John Smilga em seu curso denominado Full React Course 2020.
 
@@ -19,7 +19,7 @@ O projeto consiste na adição, manipulação e remoção de items de uma lista 
 ![](assets/image1.png)
 ![](assets/image2.png)
 
-# Tecnologies Used / Tecnologias utilizadas
+# Technologies Used / Tecnologias utilizadas
 
 ## Front end
 - HTML5
@@ -32,7 +32,7 @@ O projeto consiste na adição, manipulação e remoção de items de uma lista 
 
 #  How to run the project / Como executar o projeto
 
-Prerequisites/ Pré-requisitos: npm / yarn
+Prerequisites / Pré-requisitos: npm / yarn
 
 ```bash
 # Clone repository / Clonar repositório
